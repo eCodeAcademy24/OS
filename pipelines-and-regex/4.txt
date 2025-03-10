@@ -1,0 +1,13 @@
+Пребарувај ги сите корисници кои започнале сесија за време на работен ден и имаат сесија која траела повеќе од 1 час.
+
+Решение:
+cat sessions.txt | grep -E 'Mon|Tue|Wed|Thu|Fri' | awk '{if ($3 > 60) print $1, $3}' | sort -k2 -n
+
+Креирај датотека sessions.txt и нека ги содржи следниве податоци:
+user1 Sat 180
+user2 Sun 150
+user3 Sat 200
+user4 Thu 250
+user5 Fri 300
+user6 Mon 20
+user7 Wed 500
