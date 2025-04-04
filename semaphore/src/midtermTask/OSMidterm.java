@@ -131,7 +131,7 @@ class OSMidterm {
     }
 
     // TODO: Make the Concatenation Class  a Thread Class
-    static class Concatenation extends Thread implements Runnable{
+    static class Concatenation extends Thread {
 
         private DataMatrix matrix;
         private StatisticsResource statisticsResource;

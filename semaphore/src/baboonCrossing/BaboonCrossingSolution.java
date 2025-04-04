@@ -11,10 +11,15 @@ import java.util.concurrent.Semaphore;
 public class BaboonCrossingSolution {
     //TODO: definiraj semafori
     public static Semaphore controlRope;
+
     public static Semaphore baboonLeftLock;
+
     public static Semaphore baboonRightLock;
+
     public static Semaphore baboonsOnRope;
+
     public static int leftCount;
+
     public static int rightCount;
 
     //TODO: inicijaliziraj semafori so pomos na init()
