@@ -9,20 +9,29 @@ import java.util.concurrent.Semaphore;
 
 public class ExamSolution {
 
+    // TODO: definiraj gi potrebnite semafori
     static Semaphore teacherInside;
-    static Semaphore lock;
+
     static Semaphore studentsEnter;
+
     static Semaphore studentsHere;
+
     static Semaphore studentsCanLeave;
+
     static Semaphore teacherLeave;
-    static int students;
+
+    static int studentsCount;
+
+    static Semaphore lock;
+
+    // TODO: inicijaliziraj nivnata vrednost soodvetno
     public static void init() {
         teacherInside = new Semaphore(1);
         studentsEnter = new Semaphore(0);
-        lock = new Semaphore(1);
         studentsHere = new Semaphore(0);
         studentsCanLeave = new Semaphore(0);
-        students = 0;
+        studentsCount = 0;
+        lock = new Semaphore(1);
     }
 
     public static class Teacher extends TemplateThread {
@@ -31,6 +40,8 @@ public class ExamSolution {
             super(numRuns);
         }
 
+
+        // TODO: implementiraj ja execute metodata kaj Teacher
         @Override
         public void execute() throws InterruptedException {
             teacherInside.acquire();
@@ -54,27 +65,26 @@ public class ExamSolution {
             super(numRuns);
         }
 
+        // TODO: implementiraj ja execute metodata kaj Student
         @Override
         public void execute() throws InterruptedException {
             studentsEnter.acquire();
-            state.studentEnter();
             lock.acquire();
-            students++;
             state.studentEnter();
-            if(students == 50){
-                studentsHere.release();
+            studentsCount++;
+            if (studentsCount == 50) {
+                studentsHere.release(50);
             }
             lock.release();
 
             studentsCanLeave.acquire();
             lock.acquire();
-            students--;
+            studentsCount--;
             state.studentLeave();
-            if(students == 0){
+            if (studentsCount == 0) {
                 teacherLeave.release();
             }
             lock.release();
-
         }
     }
 

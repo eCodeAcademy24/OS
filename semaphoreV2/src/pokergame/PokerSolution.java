@@ -10,13 +10,15 @@ public class PokerSolution {
 
     //TODO: definiraj semafori
     static Semaphore canSit;
-    static Semaphore lock;
+
     static Semaphore canDeal;
+
     static int playerCount;
+
+    static  Semaphore lock;
 
     //TODO: inicijaziraj semafori
     public static void init() {
-        playerCount = 0;
         canSit = new Semaphore(6);
         lock = new Semaphore(1);
         canDeal = new Semaphore(0);
@@ -32,12 +34,12 @@ public class PokerSolution {
         @Override
         public void execute() throws InterruptedException {
             canSit.acquire();
-            state.playerSeat();
             lock.acquire();
+            state.playerSeat();
             playerCount++;
-            if(playerCount == 6){
+            if (playerCount == 6) {
                 state.dealCards();
-                canDeal.release(6);
+                canDeal.release(5);
             }
             lock.release();
 
@@ -45,17 +47,18 @@ public class PokerSolution {
             state.play();
 
             lock.acquire();
-            state.endRound();
-            canSit.release(6);
-            playerCount = 0;
+            playerCount--;
+            if (playerCount == 0) {
+                state.endRound();
+                canSit.release(6);
+            }
             lock.release();
 
-//            lock.acquire(); ova reshenie e za dokolku se bara igracite da ja napustaat masata eden po eden
-//            playerCount--;
-//            if(playerCount == 0){
-//                state.endRound();
-//                canSit.release(6);
-//            }
+            // dokolku treba site da povikaat endRound
+//            lock.acquire();
+//            state.endRound();
+//            canSit.release(6);
+//            playerCount = 0;
 //            lock.release();
         }
     }
