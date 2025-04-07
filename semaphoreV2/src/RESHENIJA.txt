@@ -1,0 +1,229 @@
+RESHENIJA OD ZADACHITE
+
+1. Ca2N4
+
+semafori: 
+ //TODO: definiraj semafori
+    static Semaphore ca;
+    static Semaphore n;
+    static Semaphore caLock;
+    static Semaphore nHere;
+    static Semaphore bondReady;
+    static Semaphore bondSuccess;
+    static Semaphore canLeave;
+    static int caCounter;
+
+    //TODO: inicijaliziraj semafori
+    public void init() {
+        ca = new Semaphore(2);
+        n = new Semaphore(4);
+        caLock = new Semaphore(1);
+        nHere = new Semaphore(0);
+        bondReady = new Semaphore(0);
+        bondSuccess = new Semaphore(0);
+        canLeave = new Semaphore(0);
+        caCounter = 0;
+    }
+
+Ca
+ //TODO: implemetiraj execute() kaj Ca
+        public void execute() throws InterruptedException {
+            ca.acquire();
+            caLock.acquire();
+            caCounter++;
+            if(caCounter == 2){
+                caCounter = 0;
+                caLock.release();
+                nHere.acquire(4);
+                bondReady.release(5);
+                bond();
+                bondSuccess.acquire(5);
+                canLeave.release(5);
+                validate();
+                ca.release(2);
+            }else{
+                caLock.release();
+                bondReady.acquire();
+                bond();
+                bondSuccess.release();
+                validate();
+                canLeave.acquire();
+            }
+        }
+N
+//TODO: implemetiraj execute() kaj N
+        public void execute() throws InterruptedException {
+            n.acquire();
+            nHere.release();
+            bondReady.acquire();
+            bond();
+            bondSuccess.release();
+            canLeave.acquire();
+            n.release();
+        }
+
+
+2. Ca3N2
+
+semafori:
+    // TODO: definiraj semafori
+    static Semaphore ca;
+    static Semaphore n;
+    static Semaphore nHere;
+    static Semaphore canBond;
+    static Semaphore bondSuccess;
+    static Semaphore canLeave;
+    static Semaphore lock;
+    static int caCounter;
+    // TODO: inicijaliziraj semafori
+    public void init() {
+        ca = new Semaphore(3);
+        n = new Semaphore(2);
+        nHere = new Semaphore(0);
+        canBond = new Semaphore(0);
+        bondSuccess = new Semaphore(0);
+        canLeave = new Semaphore(0);
+        lock = new Semaphore(1);
+        caCounter = 0;
+    }
+
+// TODO: implemetiraj execute() kaj Ca
+        public void execute() throws InterruptedException {
+            ca.acquire();
+            lock.acquire();
+            caCounter++;
+            if(caCounter == 3){
+                caCounter = 0;
+                lock.release();
+                nHere.acquire(2);
+                canBond.release(4);
+                bond();
+                bondSuccess.acquire(4);
+                canLeave.release(4);
+                validate();
+                ca.release(3);
+            }else{
+                lock.release();
+                canBond.acquire();
+                bond();
+                bondSuccess.release();
+                canLeave.acquire();
+            }
+        }
+
+// TODO: implemetiraj execute() kaj N
+        public void execute() throws InterruptedException {
+            n.acquire();
+            nHere.release();
+            canBond.acquire();
+            bond();
+            bondSuccess.release();
+            canLeave.acquire();
+            n.release();
+        }
+
+3. SchoolBusSolution
+
+semafori:
+ //TODO: definiraj semafori
+    static Semaphore driverInside;
+    static Semaphore lock;
+    static Semaphore studentsCanEnter;
+    static Semaphore canDeparture;
+    static Semaphore studentsLeave;
+    static Semaphore driverLeave;
+
+    static int students;
+
+    //TODO: iniciijaziraj semafori
+    public static void init() {
+        driverInside = new Semaphore(1);
+        lock = new Semaphore(1);
+        studentsCanEnter = new Semaphore(0);
+        canDeparture = new Semaphore(1);
+        studentsLeave = new Semaphore(0);
+        driverLeave = new Semaphore(1);
+        students = 0;
+    }
+
+Driver
+ driverInside.acquire();
+            lock.acquire();
+            state.driverEnter();
+            studentsCanEnter.release(50);
+            lock.release();
+
+            canDeparture.acquire();
+            lock.acquire();
+            state.busDeparture();
+            state.busArrive();
+            studentsLeave.release(50);
+            lock.release();
+
+            driverLeave.acquire();
+            lock.acquire();
+            state.driverLeave();
+            driverInside.release();
+            lock.release();
+Student
+ //TODO: implementacija na execute() kaj Student
+        @Override
+        public void execute() throws InterruptedException {
+            studentsCanEnter.acquire();
+            state.studentEnter();
+            lock.acquire();
+            students++;
+            if(students == 50){
+                canDeparture.release();
+            }
+
+            studentsLeave.acquire();
+            lock.acquire();
+            students--;
+            if(students == 0){
+                driverLeave.release();
+            }
+            lock.release();
+        }
+
+4. SushiBarSolution
+
+semafori:
+  //TODO: definiraj semafori
+    static Semaphore avaialbleSeats;
+    static Semaphore canEat;
+    static Semaphore lock;
+    static int customer;
+
+    //TODO: iniciijaziraj semafori
+    public static void init() {
+        avaialbleSeats = new Semaphore(6);
+        canEat = new Semaphore(0);
+        lock = new Semaphore(1);
+        customer = 0;
+    }
+
+Customer
+ @Override
+        public void execute() throws InterruptedException {
+            avaialbleSeats.acquire();
+            lock.acquire();
+            state.customerSeat();
+            customer++;
+            if(customer == 6){
+                state.callWaiter();
+                canEat.release(6);
+            }
+            lock.release();
+
+            canEat.acquire();
+            state.customerEat();
+
+            lock.acquire();
+            customer--;
+            if(customer == 0){
+                state.eatingDone();
+                avaialbleSeats.release(6);
+            }
+            lock.release();
+        }
