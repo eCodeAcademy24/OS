@@ -19,7 +19,7 @@ public class Client extends Thread {
 
             String[] sampleWords = {
                     "apple", "banana", "cherry", "date", "elderberry",
-                    "fig", "grape", "apple", "banana", "STOP"
+                    "fig", "grape", "apple", "banana", "stop"
             };
 
             bw.write("HANDSHAKE\n");

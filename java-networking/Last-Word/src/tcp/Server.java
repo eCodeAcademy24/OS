@@ -9,19 +9,18 @@ import java.util.Set;
 
 public class Server {
     public static final int PORT = 7391;
-    public static final Set<String> knownWords = Collections.synchronizedSet(new HashSet<>());
+    public static final Set<String> knownWords = Collections.synchronizedSet(new HashSet<String>());
 
     public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Server started on port " + PORT);
+        try {
+            ServerSocket serverSocket = new ServerSocket(PORT);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(new Worker(clientSocket)).start();
             }
-
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

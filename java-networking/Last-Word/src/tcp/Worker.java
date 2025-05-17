@@ -34,6 +34,7 @@ public class Worker implements Runnable {
                     out.write(Server.knownWords.size() + "\n");
                     out.write("LOGGED OUT\n");
                     out.flush();
+                    clientSocket.close();
                     break;
                 }
 
@@ -50,19 +51,13 @@ public class Worker implements Runnable {
                 out.write(input + " " + (known ? "IMA" : "NEMA") + "\n");
                 out.flush();
             }
-
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                clientSocket.close();
-            } catch (IOException ignored) {
-            }
         }
     }
 
     private void logWord(String word, String clientIP) {
-        String filePath = "PATH_TO_THE_FILE";
+        String filePath = "D:\\ecode\\Kurs\\OS\\Zadaci\\java-networking\\Last-Word\\src\\known-words.txt";
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
             String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
