@@ -69,8 +69,11 @@ class Worker implements Runnable {
     }
 
     private synchronized void log(String line) throws IOException {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(fileOutput, true))) {
+        try {
+            PrintWriter writer = new PrintWriter(new FileWriter(fileOutput, true));
             writer.println(line);
+        } catch (IOException e) {
+            System.out.println("Error writing to file " + fileOutput.getAbsolutePath());
         }
     }
 }
