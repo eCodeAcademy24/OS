@@ -2,6 +2,25 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+class Logger {
+    private static final Object lock = new Object();
+
+    public static void logToFile(String message) {
+        synchronized (lock) {
+            try {
+                FileWriter fw = new FileWriter("chatlog.txt", true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter out = new PrintWriter(bw);
+                out.println(message);
+                out.flush();
+            } catch (IOException e) {
+                System.out.println("Грешка при запишување во датотека: " + e.getMessage());
+            }
+        }
+    }
+}
+
+
 class ClientSend extends Thread {
     private final PrintWriter out;
     private final Queue<String> queue = new LinkedList<>();
@@ -23,6 +42,7 @@ class ClientSend extends Thread {
                 }
 
                 out.println(message);
+                Logger.logToFile(message);
                 System.out.println("Испратено: " + message);
             }
         } catch (InterruptedException e) {
@@ -54,6 +74,7 @@ class ClientReceive extends Thread {
             String line;
             while ((line = in.readLine()) != null) {
                 System.out.println("Примено: " + line);
+                Logger.logToFile(line);
 
                 if (line.contains("Succesfully logged on to server")) {
                     sender.addMessage("hello:" + INDEX);
